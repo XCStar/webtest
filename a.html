@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图片加水印demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/watermarkjs@2.0.0/dist/watermark.min.js"></script>
+    <style>
+        #preview { max-width: 500px; margin-top: 20px; }
+        .container { width: 500px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>图片加水印demo</h2>
+        <input type="file" id="upload" accept="image/*">
+        <input type="text" id="watermarkText" placeholder="输入水印文字" value="测试水印">
+        <button onclick="addWatermark()">添加水印</button>
+        <div id="preview"></div>
+    </div>
+
+    <script>
+        
+                var rotate = function(target) {
+                var context = target.getContext('2d');
+                 
+                var text = document.getElementById('watermarkText').value;;
+                var metrics = context.measureText(text);
+                var x = (target.width / 2) - (metrics.width + 24);
+                var y = (target.height / 2) + 48 * 2;
+                
+                context.translate(x, y);
+                context.globalAlpha = 0.5;
+                context.fillStyle = '#f00';
+                context.font = '48px Arial';
+                context.rotate(-45 * Math.PI / 180);
+                context.fillText(text, 0, 0);
+                return target;
+                }
+
+        function addWatermark() {
+            const file = document.getElementById('upload').files[0];
+            
+            
+            if (!file) {
+                alert('请先选择图片');
+                return;
+            }
+            
+            watermark([file])
+                .image(rotate)
+               
+               
+                .then(img => {
+                    document.getElementById('preview').innerHTML = '';
+                    document.getElementById('preview').appendChild(img);
+                });
+        }
+    </script>
+</body>
+</html>
