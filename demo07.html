@@ -18,24 +18,9 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f5f5f5;
+            background-color: #ada9a9;
         }
-        
-        #cameraBtn {
-            padding: 15px 30px;
-            font-size: 18px;
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-            z-index: 99;
-        }
-        
-        #cameraBtn:hover {
-            background-color: #3367d6;
-        }
+      
         
         #videoContainer {
             position: fixed;
@@ -53,7 +38,7 @@
             object-fit: cover;
         }
         
-        #confirmBtn {
+        .btn {
             position: fixed;
             bottom: 30px;
             left: 50%;
@@ -66,7 +51,7 @@
             border-radius: 4px;
             cursor: pointer;
             z-index: 100;
-            display: none;
+          
         }
         
         #photoResult {
@@ -88,13 +73,11 @@
     </style>
 </head>
 <body>
-    <button id="cameraBtn">拍照</button>
+    <button id="cameraBtn" class="btn">开始</button>
     
     <div id="videoContainer">
         <video id="videoElement" autoplay></video>
     </div>
-    
-    <button id="confirmBtn">确认</button>
     
     <img id="photoResult" alt="拍摄结果">
     
@@ -102,30 +85,32 @@
         const cameraBtn = document.getElementById('cameraBtn');
         const videoContainer = document.getElementById('videoContainer');
         const videoElement = document.getElementById('videoElement');
-        const confirmBtn = document.getElementById('confirmBtn');
         const photoResult = document.getElementById('photoResult');
         
         let stream = null;
         
         cameraBtn.addEventListener('click', async () => {
             photoResult.style.display='none';
-            if (cameraBtn.textContent === '拍照') {
+            if (cameraBtn.textContent === '开始') {
                 try {
                     stream = await navigator.mediaDevices.getUserMedia({ video: true });
                     videoElement.srcObject = stream;
                     videoElement.play();
                     videoContainer.style.display = 'block';
-                    confirmBtn.style.display = 'block';
-                    cameraBtn.style.display = 'none';
+                    cameraBtn.textContent = '拍照'
                 } catch (err) {
                     console.error('无法访问摄像头:', err);
                     alert('无法访问摄像头，请检查权限设置');
                 }
             }
+            else if(cameraBtn.textContent === '拍照')
+            {
+                 stop();
+            }
         });
         
-        confirmBtn.addEventListener('click', () => {
-            // 创建画布捕获视频帧
+        function stop(){
+             // 创建画布捕获视频帧
             const canvas = document.createElement('canvas');
             canvas.width = videoElement.videoWidth;
             canvas.height = videoElement.videoHeight;
@@ -143,12 +128,10 @@
             
             // 隐藏视频和确认按钮
             videoContainer.style.display = 'none';
-            confirmBtn.style.display = 'none';
-            
             // 重置拍照按钮
-            cameraBtn.textContent = '拍照';
-            cameraBtn.style.display = 'block';
-        });
+            cameraBtn.textContent = '开始';
+         
+        }
     </script>
 </body>
 </html>
