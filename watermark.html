@@ -39,20 +39,17 @@
 
         function addWatermark() {
             const file = document.getElementById('upload').files[0];
-            
-            
             if (!file) {
                 alert('请先选择图片');
                 return;
             }
-            
             watermark([file])
                 .image(rotate)
-               
-               
                 .then(img => {
+                    console.log(img.src);
                     document.getElementById('preview').innerHTML = '';
                     document.getElementById('preview').appendChild(img);
+                  
                 });
         }
     </script>
