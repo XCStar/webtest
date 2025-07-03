@@ -123,7 +123,7 @@
             }
             
             // 显示拍摄结果
-            photoResult.src = canvas.toDataURL('image/png');
+            photoResult.src = canvas.toDataURL('image/jpeg', 0.8);
             photoResult.style.display = 'block';
             
             // 隐藏视频和确认按钮
