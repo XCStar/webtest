@@ -6,7 +6,24 @@
     <title>原生input</title>
 </head>
 <body>
-   <labe>拍照：</labe><input type="file" accept="image/*" capture="camera">
-
+   <labe>拍照：</labe><input type="file" id="imageInput" accept="image/*" capture="camera">
+   <img id="preview" src="" alt="图片预览">
 </body>
+
+ <script type="text/javascript">
+    document.getElementById('imageInput').addEventListener('change', function (e) {
+            const file =   f = document.getElementById('imageInput').files[0];; // 获取第一个文件对象
+           
+           
+            if (file) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (e) {
+                    document.getElementById('preview').src = e.target.result; // 显示Base64格式图片
+                };
+              
+            }
+});
+
+ </script>
 </html>
