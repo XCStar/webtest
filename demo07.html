@@ -85,7 +85,7 @@
         const cameraBtn = document.getElementById('cameraBtn');
         const videoContainer = document.getElementById('videoContainer');
         const videoElement = document.getElementById('videoElement');
-        const photoResult = document.getElementById('photoResult');
+       
         
         let stream = null;
         
@@ -125,11 +125,18 @@
              // 隐藏视频和确认按钮
             videoContainer.style.display = 'none';
             var imgUrl= canvas.toDataURL('image/jpeg', 0.8);
-            // 显示拍摄结果
-            photoResult.style.display = 'block';
-            photoResult.width=canvas.width;
-            photoResult.height=canvas.height;
-            photoResult.src =imgUrl;
+            console.log(imgUrl);
+            try {
+                  // 显示拍摄结果
+                const photoResult = document.getElementById('photoResult');
+                photoResult.src =imgUrl;
+                photoResult.style.display = 'block';
+                
+            } catch (error) {
+                console.log(error);
+            }
+          
+           
             
            
             // 重置拍照按钮
