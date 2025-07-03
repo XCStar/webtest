@@ -90,28 +90,32 @@
         let stream = null;
         
         cameraBtn.addEventListener('click', async () => {
-           photoResult.style.display='none';
-            if (cameraBtn.textContent === '开始') {
-               
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia({
-                        audio: false,
-                        video: {facingMode: { exact: "environment" }  }// 强制使用后置摄像头;
-                    }); 
-                    videoElement.srcObject = stream;
-                    videoElement.play();
-                    videoContainer.style.display = 'block';
-                    cameraBtn.textContent = '拍照'
-                } catch (err) {
-                    console.error('无法访问摄像头:', err);
-                    alert('无法访问摄像头，请检查权限设置');
+                photoResult.style.display = 'none';
+                if (cameraBtn.textContent === '开始') {
+
+                    try {
+                        stream = await getStream()
+                        if (stream) {
+                            videoElement.srcObject = stream;
+                            videoElement.play();
+                            videoContainer.style.display = 'block';
+                            cameraBtn.textContent = '拍照'
+                        }
+                        else{
+                            alert('无法访问摄像头，请检查权限设置或者确定设备是否有后置摄像头');
+                        }
+
+                    } catch (err) {
+
+                        console.log(err === OverconstrainedError);
+                        console.error('无法访问摄像头:', err);
+                        alert('无法访问摄像头，请检查权限设置');
+                    }
                 }
-            }
-            else if(cameraBtn.textContent === '拍照')
-            {
-                 stop();
-            }
-        });
+                else if (cameraBtn.textContent === '拍照') {
+                    stop();
+                }
+            });
         
         function stop(){
              // 创建画布捕获视频帧
@@ -146,6 +150,30 @@
             cameraBtn.textContent = '开始';
          
         }
+        async function getStream(){
+            // 必须先获取用户授权
+            const stream= await navigator.mediaDevices.getUserMedia({audio: false, video: true });
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const cameras = devices.filter(d => d.kind === 'videoinput');
+            
+            let constraints = { video: true };
+            
+            if (cameras.length > 1) {
+                // 停止视频流
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+               // 多摄像头时优先后置
+                constraints = {
+                    audio: false,
+                    video: { facingMode: { exact: "environment" } }
+                };
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+            }
+            return stream
+            
+        } 
+
     </script>
 </body>
 </html>
