@@ -90,9 +90,9 @@
         let stream = null;
         
         cameraBtn.addEventListener('click', async () => {
-          
+           photoResult.style.display='none';
             if (cameraBtn.textContent === '开始') {
-                photoResult.style.display='none';
+               
                 try {
                     stream = await navigator.mediaDevices.getUserMedia({ video: true });
                     videoElement.srcObject = stream;
@@ -122,13 +122,16 @@
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
             }
-            
-            // 显示拍摄结果
-            photoResult.src = canvas.toDataURL('image/jpeg', 0.8);
-            photoResult.style.display = 'block';
-            
-            // 隐藏视频和确认按钮
+             // 隐藏视频和确认按钮
             videoContainer.style.display = 'none';
+            var imgUrl= canvas.toDataURL('image/jpeg', 0.8);
+            // 显示拍摄结果
+            photoResult.style.display = 'block';
+            photoResult.width=canvas.width;
+            photoResult.height=canvas.height;
+            photoResult.src =imgUrl;
+            
+           
             // 重置拍照按钮
             cameraBtn.textContent = '开始';
          
