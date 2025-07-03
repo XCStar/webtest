@@ -88,6 +88,7 @@
 
             currentStream = stream;
             video.srcObject = stream;
+            video.play();
         }
         function error(err) {
             resultDiv.innerHTML = "<p>不支持navigator.mediaDevices.getUserMedia" + err.message + "</p>";
