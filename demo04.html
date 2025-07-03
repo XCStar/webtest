@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拍照水印测试</title>
+    <script src="https://cdn.jsdelivr.net/npm/watermarkjs@2.0.0/dist/watermark.min.js"></script>
+</head>
+
+<body>
+    <labe>拍照：</labe><input type="file" id="imageInput" accept="image/*" capture="camera">
+    <div id="preview" src="" alt="图片预览">
+</body>
+<script text="text/javascript">
+    var rotate = function (target) {
+
+        const fontSize = 20;
+        const color = 'rgba(180, 180, 180)';
+        const angle = -30; // 默认-30度倾斜
+        const spacing = 100; // 水印间距
+        var context = target.getContext('2d');
+        var text = "测试水印";
+        var metrics = context.measureText(text);
+        var x = (target.width / 2) - (metrics.width);
+        var y = (target.height / 2) + 48 * 2;
+
+        context.translate(x, y);
+        context.globalAlpha = 0.5;
+        context.fillStyle = color;
+        context.font = '48px Arial';
+        // 旋转画布
+        const radians = angle * Math.PI / 180;
+        context.translate(target.width / 2, target.height / 2);
+        context.rotate(radians);
+        context.translate(-target.width / 2, -target.height / 2);
+
+        // 计算水印分布
+        const diagonalLength = Math.sqrt(target.width * target.width + target.height * target.height);
+        const countX = Math.ceil(diagonalLength / spacing) * 2;
+        const countY = Math.ceil(diagonalLength / spacing) * 2;
+
+        // 绘制水印
+        for (let i = -countX; i < countX; i++) {
+            for (let j = -countY; j < countY; j++) {
+                const x = i * spacing;
+                const y = j * spacing;
+                context.fillText(text, x, y);
+            }
+        }
+
+
+        return target;
+    }
+    function addWatermark() {
+        const file = document.getElementById('imageInput').files[0];
+
+
+        if (!file) {
+            alert('请先选择图片');
+            return;
+        }
+
+        watermark([file])
+            .image(rotate)
+            .then(img => {
+                document.getElementById('preview').innerHTML = '';
+                document.getElementById('preview').appendChild(img);
+            });
+    }
+    document.getElementById('imageInput').addEventListener('change', function (e) {
+        addWatermark()
+    })
+</script>
+
+</html>
