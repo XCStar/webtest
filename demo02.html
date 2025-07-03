@@ -53,15 +53,19 @@
             if (navigator.mediaDevices.getUserMedia) {
                 //最新标准API
                 navigator.mediaDevices.getUserMedia(constrains).then(success).catch(error);
+                info.innerHTML="1";
             } else if (navigator.webkitGetUserMedia) {
                 //webkit内核浏览器
                 navigator.webkitGetUserMedia(constrains).then(success).catch(error);
+                 info.innerHTML="2";
             } else if (navigator.mozGetUserMedia) {
                 //Firefox浏览器
                 navagator.mozGetUserMedia(constrains).then(success).catch(error);
+                 info.innerHTML="3";
             } else if (navigator.getUserMedia) {
                 //旧版API
                 navigator.getUserMedia(constrains).then(success).catch(error);
+                 info.innerHTML="4";
             }
         }
 
@@ -86,7 +90,7 @@
             video.srcObject = stream;
         }
         function error(err) {
-            info.innerHTML = "<p>不支持navigator.mediaDevices.getUserMedia" + err.message + "</p>";
+            resultDiv.innerHTML = "<p>不支持navigator.mediaDevices.getUserMedia" + err.message + "</p>";
         }
 
         // 停止摄像头
