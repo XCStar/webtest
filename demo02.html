@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>手机网页拍照</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #video, #canvas {
+            max-width: 100%;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>网页拍照功能</h1>
+        <video id="video" width="320" height="240" autoplay playsinline></video>
+        <div>
+            <button id="capture">拍照</button>
+            <button id="switch">切换摄像头</button>
+        </div>
+        <canvas id="canvas" width="320" height="240"></canvas>
+        <div id="result"></div>
+
+        <input type="file" accept="image/*"  capture="camera">
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture');
+        const switchBtn = document.getElementById('switch');
+        const resultDiv = document.getElementById('result');
+        
+        let currentStream = null;
+        let facingMode = "user"; // 前置摄像头
+
+        // 启动摄像头
+        function startCamera() {
+            stopCamera();
+            
+            const constraints = {
+                video: {
+                    facingMode: facingMode,
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    currentStream = stream;
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("摄像头错误:", err);
+                    resultDiv.innerHTML = `<p style="color:red">无法访问摄像头: ${err.message}</p>`;
+                });
+        }
+
+        // 停止摄像头
+        function stopCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        // 拍照
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // 显示拍照结果
+            const imageUrl = canvas.toDataURL('image/jpeg', 0.8);
+            resultDiv.innerHTML = `
+                <h3>拍照结果</h3>
+                <img src="${imageUrl}" style="max-width:100%">
+                <p><a href="${imageUrl}" download="photo.jpg">下载图片</a></p>
+            `;
+        });
+
+        // 切换摄像头
+        switchBtn.addEventListener('click', () => {
+            facingMode = facingMode === "user" ? "environment" : "user";
+            startCamera();
+        });
+
+        // 页面加载时启动摄像头
+        window.addEventListener('load', startCamera);
+        // 页面离开时关闭摄像头
+        window.addEventListener('beforeunload', stopCamera);
+    </script>
+</body>
+</html>

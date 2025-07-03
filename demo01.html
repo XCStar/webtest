@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>手机拍照兼容版</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 10px; }
+        #video { display: block; margin: 0 auto; max-width: 100%; background: #000; }
+        #canvas { display: none; }
+        button { 
+            padding: 12px 20px; 
+            margin: 10px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 16px;
+        }
+        #output { max-width: 100%; margin-top: 20px; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>摄像头拍照演示</h2>
+    <video id="video" autoplay playsinline></video>
+    <div>
+        <button id="start">启动摄像头</button>
+        <button id="capture" disabled>拍照</button>
+        <button id="switch" disabled>切换摄像头</button>
+    </div>
+    <canvas id="canvas"></canvas>
+    <img id="output" src="" alt="拍照结果">
+    <p id="error" class="error"></p>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture');
+        const startBtn = document.getElementById('start');
+        const switchBtn = document.getElementById('switch');
+        const output = document.getElementById('output');
+        const errorEl = document.getElementById('error');
+
+        let stream = null;
+        let facingMode = 'environment'; // 默认后置摄像头
+
+        // 1. 启动摄像头（iOS 必须由用户手动触发）
+        startBtn.addEventListener('click', () => {
+            startCamera();
+        });
+
+        // 2. 拍照功能
+        captureBtn.addEventListener('click', () => {
+            capturePhoto();
+        });
+
+        // 3. 切换前后摄像头
+        switchBtn.addEventListener('click', () => {
+            switchCamera();
+        });
+
+        // 核心函数：启动摄像头
+        function startCamera() {
+            // 关闭之前的摄像头（如果存在）
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+
+            navigator.mediaDevices.getUserMedia({
+                video: { 
+                    facingMode: facingMode,
+                    width: { ideal: 1280 }, // 可选：指定分辨率
+                    height: { ideal: 720 }
+                },
+                audio: false
+            })
+            .then(s => {
+                stream = s;
+                video.srcObject = stream;
+                startBtn.disabled = true;
+                captureBtn.disabled = false;
+                switchBtn.disabled = false;
+                errorEl.textContent = '';
+            })
+            .catch(err => {
+                errorEl.textContent = `摄像头错误: ${err.name}`;
+                console.error("摄像头错误:", err);
+            });
+        }
+
+        // 核心函数：拍照
+        function capturePhoto() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            
+            // 处理 iOS 可能的镜像问题（前置摄像头需水平翻转）
+            if (facingMode === 'user') {
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+            }
+            
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // 生成图片并显示
+            const imageData = canvas.toDataURL('image/jpeg');
+            output.src = imageData;
+            
+            // 可选：保存图片或上传
+            // uploadPhoto(imageData);
+        }
+
+        // 核心函数：切换摄像头
+        function switchCamera() {
+            facingMode = facingMode === 'user' ? 'environment' : 'user';
+            startCamera();
+        }
+
+        // 页面关闭时释放摄像头
+        window.addEventListener('beforeunload', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>
