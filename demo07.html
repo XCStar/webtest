@@ -96,7 +96,7 @@
                 try {
                     stream = await navigator.mediaDevices.getUserMedia({
                         audio: false,
-                        video: { facingMode: "environment" }// 强制使用后置摄像头;
+                        video: {facingMode: { exact: "environment" }  }// 强制使用后置摄像头;
                     }); 
                     videoElement.srcObject = stream;
                     videoElement.play();
