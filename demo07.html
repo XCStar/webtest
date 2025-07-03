@@ -79,7 +79,7 @@
         <video id="videoElement" autoplay></video>
     </div>
     
-    <img id="photoResult" alt="拍摄结果">
+    <div id="photoResult" alt="拍摄结果"></div>
     
     <script>
         const cameraBtn = document.getElementById('cameraBtn');
@@ -129,7 +129,7 @@
             try {
                   // 显示拍摄结果
                 const photoResult = document.getElementById('photoResult');
-                photoResult.src =imgUrl;
+                photoResult.innerHTML=`<img src="${imgUrl}" style="max-width:100%">`;
                 photoResult.style.display = 'block';
                 
             } catch (error) {
