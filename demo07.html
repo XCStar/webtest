@@ -90,8 +90,9 @@
         let stream = null;
         
         cameraBtn.addEventListener('click', async () => {
-            photoResult.style.display='none';
+          
             if (cameraBtn.textContent === '开始') {
+                photoResult.style.display='none';
                 try {
                     stream = await navigator.mediaDevices.getUserMedia({ video: true });
                     videoElement.srcObject = stream;
