@@ -20,7 +20,7 @@
                         position => {
                             const { latitude, longitude } = position.coords;
                             console.log(`纬度: ${latitude}, 经度: ${longitude}`);
-
+                            getAddress(latitude,longitude);
 
                         },
                         error => {
