@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定位测试</title>
+</head>
+
+<body>
+    <button id="location">获取定位</button>
+    <div id="result"></div>
+</body>
+<script type="text/javascript">
+    document.getElementById("location").addEventListener("click", function () {
+
+            if (navigator.geolocation) {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        position => {
+                            const { latitude, longitude } = position.coords;
+                            console.log(`纬度: ${latitude}, 经度: ${longitude}`);
+
+
+                        },
+                        error => {
+                            console.error("定位失败:", error.code); // 1: 用户拒绝 2: 获取失败 3: 超时
+                            if (error.code === 1) {
+                                alert(`定位失败用户拒绝了定位`);
+                            } else if (error.code === 2) {
+                                alert(`定位失败获取位置失败`);
+                            }
+                            if (error.code === 3) {
+                                alert(`定位失败，定位超时`);
+                            }
+                            else {
+                                alert("定位失败");
+                            }
+                        },
+                        { timeout: 30000, maximumAge: 120000 } // 超时10秒，缓存60秒
+                    );
+
+                }
+
+            }
+        });
+        const apiResultDiv=document.getElementById("result");
+    function getAddress(lat,log){
+        var request=new XMLHttpRequest();
+        request.onreadystatechange=function(){
+            if (this.readyState == 4 && this.status == 200) {
+                 console.log(request.responseText);
+                 var res= JSON.parse(request);
+                 apiResultDiv.innerHTML="";
+                 for (let index = 0; index < res.length; index++) {
+                    const element = array[index];
+                    apiResultDiv.innerHTML+=`<p>${element.formatted_address}</p></br>`
+                 }
+            }
+        }
+        request.open("Get",`http://maps.google.cn/maps/api/geocode/json?latlng=${lat},${log}&language=CN`,true);
+        request.send();
+    }
+</script>
+
+</html>
