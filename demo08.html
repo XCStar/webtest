@@ -12,6 +12,7 @@
     <div id="result"></div>
 </body>
 <script type="text/javascript">
+    const apiResultDiv=document.getElementById("result");
     document.getElementById("location").addEventListener("click", function () {
 
             if (navigator.geolocation) {
@@ -20,7 +21,8 @@
                         position => {
                             const { latitude, longitude } = position.coords;
                             console.log(`纬度: ${latitude}, 经度: ${longitude}`);
-                            getAddress(latitude,longitude);
+                            apiResultDiv.innerHTML+=`纬度: ${latitude}, 经度: ${longitude}`;
+                            //getAddress(latitude,longitude);
 
                         },
                         error => {
@@ -44,7 +46,7 @@
 
             }
         });
-        const apiResultDiv=document.getElementById("result");
+     
     function getAddress(lat,log){
         var request=new XMLHttpRequest();
         request.onreadystatechange=function(){
@@ -58,7 +60,7 @@
                  }
             }
         }
-        request.open("Get",`http://maps.google.cn/maps/api/geocode/json?latlng=${lat},${log}&language=CN`,true);
+        request.open("Get",`https://maps.google.cn/maps/api/geocode/json?latlng=${lat},${log}&language=CN`,true);
         request.send();
     }
 </script>
